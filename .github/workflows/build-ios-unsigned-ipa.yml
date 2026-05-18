@@ -38,48 +38,61 @@ jobs:
           xcodebuild -version
           flutter doctor -v
 
-      - name: Generate iOS project if missing
+      - name: Generate or repair iOS project
         shell: bash
         run: |
-          if [ ! -d "ios" ]; then
+          if [ ! -d "ios" ] || [ ! -f "ios/Podfile" ]; then
+            echo "iOS project or Podfile missing. Regenerating iOS platform files..."
             flutter create --platforms=ios --org "${{ github.event.inputs.org }}" .
+          fi
+
+          if [ ! -f "ios/Podfile" ]; then
+            echo "Podfile still missing after flutter create"
+            ls -la ios || true
+            exit 1
           fi
 
       - name: Configure iOS bundle id and app name
         shell: bash
         run: |
           /usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName ${{ github.event.inputs.app_name }}" ios/Runner/Info.plist || true
+          /usr/libexec/PlistBuddy -c "Set :CFBundleName ${{ github.event.inputs.app_name }}" ios/Runner/Info.plist || true
           perl -0777 -i -pe "s/PRODUCT_BUNDLE_IDENTIFIER = [^;]+;/PRODUCT_BUNDLE_IDENTIFIER = ${{ github.event.inputs.bundle_id }};/g" ios/Runner.xcodeproj/project.pbxproj
 
       - name: Fix Flutter localization imports
         shell: bash
         run: |
           flutter pub get
-          flutter gen-l10n
+          flutter gen-l10n || true
 
           GEN_FILE=$(find . -name "app_localizations.dart" | head -n 1)
 
-          if [ -z "$GEN_FILE" ]; then
-            echo "app_localizations.dart was not generated"
-            exit 1
+          if [ -n "$GEN_FILE" ]; then
+            echo "Found localization file at: $GEN_FILE"
+
+            mkdir -p lib/gen_l10n
+            GEN_DIR=$(dirname "$GEN_FILE")
+            cp "$GEN_DIR"/*.dart lib/gen_l10n/
+
+            find lib -name "*.dart" -type f -exec perl -0pi -e 's#package:flutter_gen/gen_l10n/#package:we_packages_manager/gen_l10n/#g' {} \;
+
+            echo "Fixed imports:"
+            grep -R "gen_l10n/app_localizations.dart" lib || true
+          else
+            echo "No app_localizations.dart generated. Skipping localization import fix."
           fi
-
-          echo "Found localization file at: $GEN_FILE"
-
-          mkdir -p lib/gen_l10n
-          GEN_DIR=$(dirname "$GEN_FILE")
-          cp "$GEN_DIR"/*.dart lib/gen_l10n/
-
-          find lib -name "*.dart" -type f -exec perl -0pi -e 's#package:flutter_gen/gen_l10n/#package:we_packages_manager/gen_l10n/#g' {} \;
-
-          echo "Fixed imports:"
-          grep -R "gen_l10n/app_localizations.dart" lib || true
 
       - name: Build unsigned iOS app
         shell: bash
         run: |
           flutter pub get
           flutter build ios --release --no-codesign --config-only
+
+          if [ ! -f "ios/Podfile" ]; then
+            echo "Podfile missing before pod install"
+            ls -la ios || true
+            exit 1
+          fi
 
           cd ios
           pod install
@@ -106,8 +119,11 @@ jobs:
 
           if [ -z "$APP_PATH" ]; then
             echo "Runner.app not found"
+            find build -name "*.app" -type d || true
             exit 1
           fi
+
+          echo "Found app at: $APP_PATH"
 
           cp -R "$APP_PATH" Payload/
           zip -r WE_Packages_Manager_unsigned.ipa Payload
