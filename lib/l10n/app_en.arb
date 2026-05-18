@@ -1,0 +1,197 @@
+{
+  "@@locale": "en",
+  "appName": "WE Packages Manager",
+  "splashSubtitle": "Manage your groups easily",
+  "dashboard": "Dashboard",
+  "groups": "Groups",
+  "history": "History",
+  "settings": "Settings",
+  "welcome": "Welcome 👋",
+  "currentMonthSummary": "Current month summary",
+  "netProfit": "Net Profit",
+  "noPreviousHistory": "No previous history yet",
+  "trendFromLastMonth": "{percent}% from last cycle",
+  "@trendFromLastMonth": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "totalCollected": "Total Collected",
+  "totalPending": "Total Pending",
+  "totalExpectedSales": "Expected Sales",
+  "companyCosts": "Company Costs",
+  "paidCustomers": "Paid customers",
+  "unpaidCustomers": "Unpaid customers",
+  "allCustomersPaid": "All customers paid",
+  "pendingCustomersExist": "Pending customers",
+  "viewDetails": "View Details",
+  "edit": "Edit",
+  "delete": "Delete",
+  "save": "Save",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "ok": "OK",
+  "yes": "Yes",
+  "no": "No",
+  "addCustomer": "Add Customer",
+  "pickFromContacts": "Choose from contacts",
+  "pickFromContactsDescription": "Import the customer name and phone number from your iPhone contacts instead of typing them manually.",
+  "contactsPermissionTitle": "Contacts access needed",
+  "contactsPermissionMessage": "Allow contacts access so the app can fill the customer name and phone number automatically.",
+  "openSettings": "Open Settings",
+  "contactsReadError": "Could not read contacts. Please try again.",
+  "noContactsWithPhones": "No contacts with phone numbers were found.",
+  "searchContacts": "Search contacts",
+  "contactImported": "Contact details added.",
+  "unnamedContact": "Unnamed contact",
+  "contacts": "Contacts",
+  "selectContact": "Select",
+  "editCustomer": "Edit Customer",
+  "customerName": "Customer Name",
+  "phoneNumber": "Phone Number",
+  "gigabytes": "Gigabytes",
+  "price": "Price",
+  "notes": "Notes",
+  "notesOptional": "Notes (optional)",
+  "paymentStatus": "Payment Status",
+  "paid": "Paid",
+  "unpaid": "Unpaid",
+  "markAsPaid": "Mark as paid",
+  "markAsUnpaid": "Mark as unpaid",
+  "lastPaid": "Last paid: {date}",
+  "@lastPaid": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "notPaidYet": "Not paid yet",
+  "deleteCustomerTitle": "Delete customer",
+  "deleteCustomerMessage": "Are you sure you want to delete {name}?",
+  "@deleteCustomerMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "customerDeleted": "Customer deleted",
+  "customerSaved": "Customer saved successfully",
+  "customerPaid": "Customer marked as paid",
+  "customerUnpaid": "Customer marked as unpaid",
+  "groupFullTitle": "Group is full",
+  "groupFullMessage": "This group is full. The maximum is 6 numbers.",
+  "invalidFormTitle": "Invalid data",
+  "requiredField": "This field is required",
+  "mustBeGreaterThanZero": "Value must be greater than 0",
+  "mustBeZeroOrMore": "Value must be greater than or equal to 0",
+  "invalidNumber": "Enter a valid number",
+  "groupsTitle": "Your package groups",
+  "groupsSubtitle": "Exactly 3 groups are available. You can rename them and edit renewal settings.",
+  "groupName": "Group name",
+  "defaultGroupName": "Group {index}",
+  "@defaultGroupName": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "renewalDay": "Renewal day",
+  "renewalDayValue": "Day {day}",
+  "@renewalDayValue": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "customersCount": "{count}/{max} customers",
+  "@customersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "companyCost": "Company cost",
+  "editCompanyCost": "Edit company cost",
+  "editGroup": "Edit Group",
+  "groupSaved": "Group saved successfully",
+  "currentCycle": "Current cycle",
+  "cycleStartDate": "Cycle start date",
+  "cycleEndDate": "Cycle end date",
+  "cycleDates": "{start} - {end}",
+  "@cycleDates": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "collected": "Collected",
+  "pending": "Pending",
+  "profit": "Profit",
+  "expectedSales": "Expected sales",
+  "customers": "Customers",
+  "noCustomersYet": "No customers yet",
+  "addFirstCustomer": "Add the first customer to this group",
+  "paidSwipeAction": "Mark paid",
+  "deleteSwipeAction": "Delete",
+  "historyTitle": "Previous cycles",
+  "historySubtitle": "Saved automatically before every monthly reset.",
+  "allGroups": "All groups",
+  "filterByGroup": "Filter by group",
+  "noHistoryYet": "No history yet",
+  "historyWillAppear": "Previous cycles will appear here after the first automatic reset.",
+  "historyDetails": "History Details",
+  "financialSummary": "Financial summary",
+  "customerSnapshot": "Customer snapshot",
+  "readOnlyRecord": "Read-only previous cycle record",
+  "language": "Language",
+  "arabic": "Arabic",
+  "english": "English",
+  "languageChangeTitle": "Change language",
+  "languageChangeMessage": "The app direction and labels will update immediately.",
+  "appInfo": "App info",
+  "aboutApp": "Offline reseller dashboard for managing WE package groups, customer payments, company costs, and monthly history.",
+  "version": "Version",
+  "resetDemoData": "Reset demo data",
+  "resetDemoDataTitle": "Reset demo data",
+  "resetDemoDataMessage": "This will recreate the 3 default groups and demo customers. Current customers and history will be removed.",
+  "demoDataReset": "Demo data reset successfully",
+  "egp": "EGP",
+  "activeCustomers": "Active customers",
+  "slotsUsed": "Slots used",
+  "monthSection": "Month",
+  "searchOrFilter": "Search or filter",
+  "empty": "Empty",
+  "tryAgain": "Try again",
+  "loading": "Loading...",
+  "errorLoadingData": "Could not load data",
+  "invalidRenewalDay": "Renewal day can only be 1 or 16",
+  "phoneHint": "Example: 015xxxxxxxx",
+  "priceHint": "Monthly price",
+  "gigabytesHint": "Package size",
+  "nameHint": "Customer full name",
+  "confirmDelete": "Confirm delete",
+  "close": "Close",
+  "active": "Active",
+  "inactive": "Inactive",
+  "cycleResetNote": "Payments are reset automatically once when a new cycle starts.",
+  "companyCostHelp": "Amount paid to the company for this cycle",
+  "profitFormula": "Net profit = collected money - company cost",
+  "paidDate": "Paid date",
+  "noNotes": "No notes",
+  "gbUnit": "GB",
+  "today": "Today"
+}

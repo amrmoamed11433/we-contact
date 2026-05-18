@@ -1,0 +1,24 @@
+workflows:
+  ios-unsigned-ipa:
+    name: Build unsigned iOS IPA
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      xcode: latest
+      vars:
+        ORG: com.yourname
+        BUNDLE_ID: com.yourname.wepackagesmanager
+        APP_DISPLAY_NAME: WE Packages Manager
+    scripts:
+      - name: Show Flutter and Xcode versions
+        script: |
+          flutter --version
+          xcodebuild -version
+          flutter doctor -v
+      - name: Build unsigned IPA
+        script: |
+          chmod +x bin/*.sh
+          ./bin/build_unsigned_ipa_for_iphone_signing.sh "$ORG" "$BUNDLE_ID" "$APP_DISPLAY_NAME"
+    artifacts:
+      - build/ios/ipa/*.ipa

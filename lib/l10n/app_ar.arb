@@ -1,0 +1,197 @@
+{
+  "@@locale": "ar",
+  "appName": "WE Packages Manager",
+  "splashSubtitle": "إدارة الجروبات بسهولة",
+  "dashboard": "الرئيسية",
+  "groups": "الجروبات",
+  "history": "السجل",
+  "settings": "الإعدادات",
+  "welcome": "السلام عليكم 👋",
+  "currentMonthSummary": "ملخص الشهر الحالي",
+  "netProfit": "صافي الربح",
+  "noPreviousHistory": "لا يوجد سجل سابق بعد",
+  "trendFromLastMonth": "{percent}% عن الدورة السابقة",
+  "@trendFromLastMonth": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "totalCollected": "إجمالي المحصل",
+  "totalPending": "إجمالي المتبقي",
+  "totalExpectedSales": "المبيعات المتوقعة",
+  "companyCosts": "تكاليف الشركة",
+  "paidCustomers": "عملاء دفعوا",
+  "unpaidCustomers": "عملاء لم يدفعوا",
+  "allCustomersPaid": "كل العملاء دفعوا",
+  "pendingCustomersExist": "يوجد مبالغ متبقية",
+  "viewDetails": "عرض التفاصيل",
+  "edit": "تعديل",
+  "delete": "حذف",
+  "save": "حفظ",
+  "cancel": "إلغاء",
+  "confirm": "تأكيد",
+  "ok": "حسناً",
+  "yes": "نعم",
+  "no": "لا",
+  "addCustomer": "إضافة عميل",
+  "pickFromContacts": "اختيار من جهات الاتصال",
+  "pickFromContactsDescription": "استورد اسم العميل ورقم الهاتف من جهات الاتصال بدل ما تكتبهم يدوياً.",
+  "contactsPermissionTitle": "يلزم السماح بجهات الاتصال",
+  "contactsPermissionMessage": "اسمح للتطبيق بالوصول لجهات الاتصال عشان يملأ اسم العميل ورقمه تلقائياً.",
+  "openSettings": "فتح الإعدادات",
+  "contactsReadError": "تعذر قراءة جهات الاتصال. حاول مرة أخرى.",
+  "noContactsWithPhones": "لا توجد جهات اتصال بها أرقام هاتف.",
+  "searchContacts": "بحث في جهات الاتصال",
+  "contactImported": "تم إضافة بيانات جهة الاتصال.",
+  "unnamedContact": "جهة اتصال بدون اسم",
+  "contacts": "جهات الاتصال",
+  "selectContact": "اختيار",
+  "editCustomer": "تعديل العميل",
+  "customerName": "اسم العميل",
+  "phoneNumber": "رقم الهاتف",
+  "gigabytes": "الجيجابايت",
+  "price": "السعر",
+  "notes": "ملاحظات",
+  "notesOptional": "ملاحظات (اختياري)",
+  "paymentStatus": "حالة الدفع",
+  "paid": "مدفوع",
+  "unpaid": "غير مدفوع",
+  "markAsPaid": "تحديد كمدفوع",
+  "markAsUnpaid": "تحديد كغير مدفوع",
+  "lastPaid": "آخر دفع: {date}",
+  "@lastPaid": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "notPaidYet": "لم يدفع بعد",
+  "deleteCustomerTitle": "حذف العميل",
+  "deleteCustomerMessage": "هل أنت متأكد أنك تريد حذف {name}؟",
+  "@deleteCustomerMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "customerDeleted": "تم حذف العميل",
+  "customerSaved": "تم حفظ العميل بنجاح",
+  "customerPaid": "تم تحديد العميل كمدفوع",
+  "customerUnpaid": "تم تحديد العميل كغير مدفوع",
+  "groupFullTitle": "الجروب كامل",
+  "groupFullMessage": "الجروب ده كامل، الحد الأقصى 6 أرقام.",
+  "invalidFormTitle": "بيانات غير صحيحة",
+  "requiredField": "هذا الحقل مطلوب",
+  "mustBeGreaterThanZero": "القيمة يجب أن تكون أكبر من 0",
+  "mustBeZeroOrMore": "القيمة يجب أن تكون أكبر من أو تساوي 0",
+  "invalidNumber": "أدخل رقم صحيح",
+  "groupsTitle": "جروبات الباقات",
+  "groupsSubtitle": "يوجد 3 جروبات فقط. يمكنك تغيير الاسم وإعدادات التجديد.",
+  "groupName": "اسم الجروب",
+  "defaultGroupName": "الجروب {index}",
+  "@defaultGroupName": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      }
+    }
+  },
+  "renewalDay": "يوم التجديد",
+  "renewalDayValue": "يوم {day}",
+  "@renewalDayValue": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "customersCount": "{count}/{max} عملاء",
+  "@customersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "companyCost": "تكلفة الشركة",
+  "editCompanyCost": "تعديل تكلفة الشركة",
+  "editGroup": "تعديل الجروب",
+  "groupSaved": "تم حفظ الجروب بنجاح",
+  "currentCycle": "الدورة الحالية",
+  "cycleStartDate": "تاريخ بداية الدورة",
+  "cycleEndDate": "تاريخ نهاية الدورة",
+  "cycleDates": "{start} - {end}",
+  "@cycleDates": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "collected": "المحصل",
+  "pending": "المتبقي",
+  "profit": "الربح",
+  "expectedSales": "المبيعات المتوقعة",
+  "customers": "العملاء",
+  "noCustomersYet": "لا يوجد عملاء بعد",
+  "addFirstCustomer": "أضف أول عميل لهذا الجروب",
+  "paidSwipeAction": "تحديد مدفوع",
+  "deleteSwipeAction": "حذف",
+  "historyTitle": "الدورات السابقة",
+  "historySubtitle": "يتم حفظها تلقائياً قبل كل إعادة ضبط شهرية.",
+  "allGroups": "كل الجروبات",
+  "filterByGroup": "تصفية حسب الجروب",
+  "noHistoryYet": "لا يوجد سجل بعد",
+  "historyWillAppear": "ستظهر الدورات السابقة هنا بعد أول إعادة ضبط تلقائية.",
+  "historyDetails": "تفاصيل السجل",
+  "financialSummary": "الملخص المالي",
+  "customerSnapshot": "نسخة العملاء",
+  "readOnlyRecord": "سجل سابق للعرض فقط",
+  "language": "اللغة",
+  "arabic": "العربية",
+  "english": "English",
+  "languageChangeTitle": "تغيير اللغة",
+  "languageChangeMessage": "سيتم تحديث اتجاه التطبيق والنصوص فوراً.",
+  "appInfo": "معلومات التطبيق",
+  "aboutApp": "لوحة تحكم أوفلاين لإدارة جروبات WE ومدفوعات العملاء وتكاليف الشركة والسجل الشهري.",
+  "version": "الإصدار",
+  "resetDemoData": "إعادة ضبط البيانات التجريبية",
+  "resetDemoDataTitle": "إعادة ضبط البيانات التجريبية",
+  "resetDemoDataMessage": "سيتم إنشاء 3 جروبات افتراضية وعملاء تجريبيين من جديد. سيتم حذف العملاء والسجل الحالي.",
+  "demoDataReset": "تمت إعادة ضبط البيانات التجريبية",
+  "egp": "جنيه",
+  "activeCustomers": "العملاء النشطون",
+  "slotsUsed": "الأماكن المستخدمة",
+  "monthSection": "الشهر",
+  "searchOrFilter": "بحث أو تصفية",
+  "empty": "فارغ",
+  "tryAgain": "حاول مرة أخرى",
+  "loading": "جاري التحميل...",
+  "errorLoadingData": "تعذر تحميل البيانات",
+  "invalidRenewalDay": "يوم التجديد يجب أن يكون 1 أو 16 فقط",
+  "phoneHint": "مثال: 015xxxxxxxx",
+  "priceHint": "السعر الشهري",
+  "gigabytesHint": "حجم الباقة",
+  "nameHint": "اسم العميل بالكامل",
+  "confirmDelete": "تأكيد الحذف",
+  "close": "إغلاق",
+  "active": "نشط",
+  "inactive": "غير نشط",
+  "cycleResetNote": "يتم تصفير المدفوعات تلقائياً مرة واحدة عند بداية دورة جديدة.",
+  "companyCostHelp": "المبلغ المدفوع للشركة لهذه الدورة",
+  "profitFormula": "صافي الربح = المحصل - تكلفة الشركة",
+  "paidDate": "تاريخ الدفع",
+  "noNotes": "لا توجد ملاحظات",
+  "gbUnit": "جيجابايت",
+  "today": "اليوم"
+}

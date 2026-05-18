@@ -1,0 +1,52 @@
+name: Build unsigned iOS IPA
+
+on:
+  workflow_dispatch:
+    inputs:
+      org:
+        description: "Reverse-domain org prefix, for example com.yourname"
+        required: true
+        default: "com.yourname"
+      bundle_id:
+        description: "Unique iOS Bundle ID, for example com.yourname.wepackagesmanager"
+        required: true
+        default: "com.yourname.wepackagesmanager"
+      app_name:
+        description: "Visible app name on iPhone"
+        required: true
+        default: "WE Packages Manager"
+
+jobs:
+  build_unsigned_ipa:
+    name: Build unsigned IPA on macOS
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Install Flutter stable
+        shell: bash
+        run: |
+          git clone https://github.com/flutter/flutter.git --depth 1 -b stable "$HOME/flutter"
+          echo "$HOME/flutter/bin" >> "$GITHUB_PATH"
+
+      - name: Show Flutter and Xcode versions
+        shell: bash
+        run: |
+          flutter --version
+          xcodebuild -version
+          flutter doctor -v
+
+      - name: Build unsigned IPA
+        shell: bash
+        run: |
+          chmod +x bin/*.sh
+          ./bin/build_unsigned_ipa_for_iphone_signing.sh "${{ github.event.inputs.org }}" "${{ github.event.inputs.bundle_id }}" "${{ github.event.inputs.app_name }}"
+
+      - name: Upload unsigned IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: WE_Packages_Manager_unsigned_ipa
+          path: build/ios/ipa/*.ipa
+          if-no-files-found: error
