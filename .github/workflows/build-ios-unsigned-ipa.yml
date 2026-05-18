@@ -70,7 +70,6 @@ jobs:
             rm -rf Pods
             rm -f Podfile
             rm -f Podfile.lock
-            rm -f Runner.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings || true
 
             cd ..
           fi
@@ -115,11 +114,30 @@ jobs:
             echo "No app_localizations.dart generated. Skipping localization import fix."
           fi
 
-      - name: Build unsigned iOS app
+      - name: Prepare Flutter iOS config only
         shell: bash
         run: |
           flutter pub get
-          flutter build ios --release --no-codesign
+          flutter build ios --release --no-codesign --config-only
+
+      - name: Build unsigned iOS app with xcodebuild
+        shell: bash
+        run: |
+          xcodebuild \
+            -workspace ios/Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build/ios_xcode \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGN_STYLE=Manual \
+            DEVELOPMENT_TEAM="" \
+            PROVISIONING_PROFILE="" \
+            PROVISIONING_PROFILE_SPECIFIER="" \
+            build
 
       - name: Create unsigned IPA
         shell: bash
@@ -127,10 +145,10 @@ jobs:
           rm -rf Payload
           mkdir -p Payload
 
-          APP_PATH=$(find build/ios/iphoneos -name "Runner.app" -type d | head -n 1)
+          APP_PATH=$(find build/ios_xcode -name "Runner.app" -type d | head -n 1)
 
           if [ -z "$APP_PATH" ]; then
-            echo "Runner.app not found in build/ios/iphoneos"
+            echo "Runner.app not found in build/ios_xcode"
             echo "Searching all build folder..."
             find build -name "*.app" -type d || true
             exit 1
