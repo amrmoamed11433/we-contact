@@ -42,12 +42,10 @@ jobs:
         shell: bash
         run: |
           if [ ! -d "ios" ]; then
-            echo "iOS folder missing. Creating iOS platform files..."
             flutter create --platforms=ios --org "${{ github.event.inputs.org }}" .
           fi
 
           if [ ! -f "ios/Runner.xcodeproj/project.pbxproj" ]; then
-            echo "iOS Xcode project missing. Recreating iOS platform files..."
             flutter create --platforms=ios --org "${{ github.event.inputs.org }}" .
           fi
 
@@ -55,8 +53,6 @@ jobs:
         shell: bash
         run: |
           if [ ! -f "ios/Podfile" ]; then
-            echo "Podfile missing. Creating Flutter iOS Podfile..."
-
             cat > ios/Podfile <<'EOF'
           platform :ios, '13.0'
 
@@ -70,7 +66,6 @@ jobs:
 
           def flutter_root
             generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
-
             unless File.exist?(generated_xcode_build_settings_path)
               raise "#{generated_xcode_build_settings_path} must exist. If you're running pod install manually, make sure flutter pub get is executed first"
             end
@@ -80,7 +75,7 @@ jobs:
               return matches[1].strip if matches
             end
 
-            raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}. Try deleting Generated.xcconfig, then run flutter pub get"
+            raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}"
           end
 
           require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
@@ -88,9 +83,6 @@ jobs:
           flutter_ios_podfile_setup
 
           target 'Runner' do
-            use_frameworks!
-            use_modular_headers!
-
             flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
           end
 
@@ -106,18 +98,11 @@ jobs:
           EOF
           fi
 
-          echo "Checking ios folder:"
-          ls -la ios
-
-          echo "Checking Podfile:"
-          cat ios/Podfile
-
       - name: Configure iOS bundle id and app name
         shell: bash
         run: |
           /usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName ${{ github.event.inputs.app_name }}" ios/Runner/Info.plist || true
           /usr/libexec/PlistBuddy -c "Set :CFBundleName ${{ github.event.inputs.app_name }}" ios/Runner/Info.plist || true
-
           perl -0777 -i -pe "s/PRODUCT_BUNDLE_IDENTIFIER = [^;]+;/PRODUCT_BUNDLE_IDENTIFIER = ${{ github.event.inputs.bundle_id }};/g" ios/Runner.xcodeproj/project.pbxproj
 
       - name: Fix Flutter localization imports
@@ -129,52 +114,32 @@ jobs:
           GEN_FILE=$(find . -name "app_localizations.dart" | head -n 1)
 
           if [ -n "$GEN_FILE" ]; then
-            echo "Found localization file at: $GEN_FILE"
-
             mkdir -p lib/gen_l10n
             GEN_DIR=$(dirname "$GEN_FILE")
             cp "$GEN_DIR"/*.dart lib/gen_l10n/
-
             find lib -name "*.dart" -type f -exec perl -0pi -e 's#package:flutter_gen/gen_l10n/#package:we_packages_manager/gen_l10n/#g' {} \;
-
-            echo "Fixed imports:"
-            grep -R "gen_l10n/app_localizations.dart" lib || true
           else
             echo "No app_localizations.dart generated. Skipping localization import fix."
           fi
 
-      - name: Prepare Flutter iOS config
+      - name: Clean iOS pods and build cache
+        shell: bash
+        run: |
+          rm -rf ios/Pods
+          rm -f ios/Podfile.lock
+          rm -rf build/ios_xcode
+          rm -rf build/ios
+
+      - name: Build unsigned iOS app with Flutter
         shell: bash
         run: |
           flutter pub get
-          flutter build ios --release --no-codesign --config-only
-
-      - name: Install iOS pods
-        shell: bash
-        run: |
-          if [ ! -f "ios/Podfile" ]; then
-            echo "Podfile missing before pod install"
-            ls -la ios || true
-            exit 1
-          fi
-
           cd ios
+          pod deintegrate || true
           pod install --repo-update
           cd ..
 
-      - name: Build unsigned iOS app
-        shell: bash
-        run: |
-          xcodebuild \
-            -workspace ios/Runner.xcworkspace \
-            -scheme Runner \
-            -configuration Release \
-            -sdk iphoneos \
-            -derivedDataPath build/ios_xcode \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY="" \
-            build
+          flutter build ios --release --no-codesign
 
       - name: Create unsigned IPA
         shell: bash
@@ -182,10 +147,10 @@ jobs:
           rm -rf Payload
           mkdir -p Payload
 
-          APP_PATH=$(find build/ios_xcode -name "Runner.app" -type d | head -n 1)
+          APP_PATH=$(find build/ios/iphoneos -name "Runner.app" -type d | head -n 1)
 
           if [ -z "$APP_PATH" ]; then
-            echo "Runner.app not found"
+            echo "Runner.app not found in build/ios/iphoneos"
             find build -name "*.app" -type d || true
             exit 1
           fi
