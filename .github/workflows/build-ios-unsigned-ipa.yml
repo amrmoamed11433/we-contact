@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       org:
-        description: "Reverse-domain org prefix, for example com.yourname"
+        description: "Reverse-domain org prefix"
         required: true
-        default: "com.yourname"
+        default: "com.amrmoamed11433"
       bundle_id:
-        description: "Unique iOS Bundle ID, for example com.yourname.wepackagesmanager"
+        description: "Unique iOS Bundle ID"
         required: true
-        default: "com.yourname.wepackagesmanager"
+        default: "com.amrmoamed11433.wepackagesmanager"
       app_name:
         description: "Visible app name on iPhone"
         required: true
@@ -38,15 +38,83 @@ jobs:
           xcodebuild -version
           flutter doctor -v
 
-      - name: Build unsigned IPA
+      - name: Generate iOS project if missing
         shell: bash
         run: |
-          chmod +x bin/*.sh
-          ./bin/build_unsigned_ipa_for_iphone_signing.sh "${{ github.event.inputs.org }}" "${{ github.event.inputs.bundle_id }}" "${{ github.event.inputs.app_name }}"
+          if [ ! -d "ios" ]; then
+            flutter create --platforms=ios --org "${{ github.event.inputs.org }}" .
+          fi
+
+      - name: Configure iOS bundle id and app name
+        shell: bash
+        run: |
+          /usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName ${{ github.event.inputs.app_name }}" ios/Runner/Info.plist || true
+          perl -0777 -i -pe "s/PRODUCT_BUNDLE_IDENTIFIER = [^;]+;/PRODUCT_BUNDLE_IDENTIFIER = ${{ github.event.inputs.bundle_id }};/g" ios/Runner.xcodeproj/project.pbxproj
+
+      - name: Fix Flutter localization imports
+        shell: bash
+        run: |
+          flutter pub get
+          flutter gen-l10n
+
+          GEN_FILE=$(find . -name "app_localizations.dart" | head -n 1)
+
+          if [ -z "$GEN_FILE" ]; then
+            echo "app_localizations.dart was not generated"
+            exit 1
+          fi
+
+          echo "Found localization file at: $GEN_FILE"
+
+          mkdir -p lib/gen_l10n
+          GEN_DIR=$(dirname "$GEN_FILE")
+          cp "$GEN_DIR"/*.dart lib/gen_l10n/
+
+          find lib -name "*.dart" -type f -exec perl -0pi -e 's#package:flutter_gen/gen_l10n/#package:we_packages_manager/gen_l10n/#g' {} \;
+
+          echo "Fixed imports:"
+          grep -R "gen_l10n/app_localizations.dart" lib || true
+
+      - name: Build unsigned iOS app
+        shell: bash
+        run: |
+          flutter pub get
+          flutter build ios --release --no-codesign --config-only
+
+          cd ios
+          pod install
+          cd ..
+
+          xcodebuild \
+            -workspace ios/Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build/ios_xcode \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build
+
+      - name: Create unsigned IPA
+        shell: bash
+        run: |
+          rm -rf Payload
+          mkdir -p Payload
+
+          APP_PATH=$(find build/ios_xcode -name "Runner.app" -type d | head -n 1)
+
+          if [ -z "$APP_PATH" ]; then
+            echo "Runner.app not found"
+            exit 1
+          fi
+
+          cp -R "$APP_PATH" Payload/
+          zip -r WE_Packages_Manager_unsigned.ipa Payload
 
       - name: Upload unsigned IPA artifact
         uses: actions/upload-artifact@v4
         with:
           name: WE_Packages_Manager_unsigned_ipa
-          path: build/ios/ipa/*.ipa
+          path: WE_Packages_Manager_unsigned.ipa
           if-no-files-found: error
