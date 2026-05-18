@@ -41,22 +41,82 @@ jobs:
       - name: Generate or repair iOS project
         shell: bash
         run: |
-          if [ ! -d "ios" ] || [ ! -f "ios/Podfile" ]; then
-            echo "iOS project or Podfile missing. Regenerating iOS platform files..."
+          if [ ! -d "ios" ]; then
+            echo "iOS folder missing. Creating iOS platform files..."
             flutter create --platforms=ios --org "${{ github.event.inputs.org }}" .
           fi
 
-          if [ ! -f "ios/Podfile" ]; then
-            echo "Podfile still missing after flutter create"
-            ls -la ios || true
-            exit 1
+          if [ ! -f "ios/Runner.xcodeproj/project.pbxproj" ]; then
+            echo "iOS Xcode project missing. Recreating iOS platform files..."
+            flutter create --platforms=ios --org "${{ github.event.inputs.org }}" .
           fi
+
+      - name: Create Podfile if missing
+        shell: bash
+        run: |
+          if [ ! -f "ios/Podfile" ]; then
+            echo "Podfile missing. Creating Flutter iOS Podfile..."
+
+            cat > ios/Podfile <<'EOF'
+platform :ios, '13.0'
+
+ENV['COCOAPODS_DISABLE_STATS'] = 'true'
+
+project 'Runner', {
+  'Debug' => :debug,
+  'Profile' => :release,
+  'Release' => :release,
+}
+
+def flutter_root
+  generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
+  unless File.exist?(generated_xcode_build_settings_path)
+    raise "#{generated_xcode_build_settings_path} must exist. If you're running pod install manually, make sure flutter pub get is executed first"
+  end
+
+  File.foreach(generated_xcode_build_settings_path) do |line|
+    matches = line.match(/FLUTTER_ROOT\=(.*)/)
+    return matches[1].strip if matches
+  end
+
+  raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}. Try deleting Generated.xcconfig, then run flutter pub get"
+end
+
+require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
+
+flutter_ios_podfile_setup
+
+target 'Runner' do
+  use_frameworks!
+  use_modular_headers!
+
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    flutter_additional_ios_build_settings(target)
+
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+    end
+  end
+end
+EOF
+          fi
+
+          echo "Checking ios folder:"
+          ls -la ios
+
+          echo "Checking Podfile:"
+          cat ios/Podfile
 
       - name: Configure iOS bundle id and app name
         shell: bash
         run: |
           /usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName ${{ github.event.inputs.app_name }}" ios/Runner/Info.plist || true
           /usr/libexec/PlistBuddy -c "Set :CFBundleName ${{ github.event.inputs.app_name }}" ios/Runner/Info.plist || true
+
           perl -0777 -i -pe "s/PRODUCT_BUNDLE_IDENTIFIER = [^;]+;/PRODUCT_BUNDLE_IDENTIFIER = ${{ github.event.inputs.bundle_id }};/g" ios/Runner.xcodeproj/project.pbxproj
 
       - name: Fix Flutter localization imports
@@ -82,12 +142,15 @@ jobs:
             echo "No app_localizations.dart generated. Skipping localization import fix."
           fi
 
-      - name: Build unsigned iOS app
+      - name: Prepare Flutter iOS config
         shell: bash
         run: |
           flutter pub get
           flutter build ios --release --no-codesign --config-only
 
+      - name: Install iOS pods
+        shell: bash
+        run: |
           if [ ! -f "ios/Podfile" ]; then
             echo "Podfile missing before pod install"
             ls -la ios || true
@@ -95,9 +158,12 @@ jobs:
           fi
 
           cd ios
-          pod install
+          pod install --repo-update
           cd ..
 
+      - name: Build unsigned iOS app
+        shell: bash
+        run: |
           xcodebuild \
             -workspace ios/Runner.xcworkspace \
             -scheme Runner \
